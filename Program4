@@ -1,8 +1,5 @@
 ###########################################################
-#  Assignment #: 4
 #  Name: Sarnesh Arulnathan
-#  ASU email: sarulnat@asu.edu
-#  Course: CSE/EEE230,  TTh 6:00pm
 #  Description: Uses MIPS to take in users electricity usage and calculate a total bill per month
 ###########################################################
 #data declarations: declare variable names used in program, storage allocated in RAM
