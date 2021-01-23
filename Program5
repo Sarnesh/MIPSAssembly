@@ -1,8 +1,5 @@
 ###########################################################
-#  Assignment #: 5
 #  Name: Sarnesh Arulnathan
-#  ASU email: sarulnat@asu.edu
-#  Course: CSE/EEE230,  TTh 6:00pm
 #  Description: Gets 2 integers, and an ending index from user and makes an array from provided info
 ###########################################################
 #data declarations: declare variable names used in program, storage allocated in RAM
