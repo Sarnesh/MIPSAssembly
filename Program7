@@ -1,0 +1,87 @@
+###########################################################
+#  Name: Sarnesh Arulnathan
+#  Description: Uses a recursive function to change an entered integer from user
+###########################################################
+
+#data declarations: declare variable names used in program, storage allocated in RAM
+                            .data
+arr:          .float   0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0              #empty float array 15 spaces
+msg1:         .asciiz "Specify how many numbers should be stored in the array (at most 15):\n" 	#create a string containing "Specify how many numbers should be stored in the array (at most 15):"
+msg2:         .asciiz "Enter a number:\n" 	                                                #create a string containing "Enter a number:"
+msg3:         .asciiz "The array contains the following:\n" 	                                #create a string containing "The array contains the following:"
+msg4:         .asciiz "The number that appears the most is "                                    #create a string containing "The number that appears the most is"
+newLine:      .asciiz "\n"
+
+
+#program code is contained below under .text
+                        .text
+                        .globl    main   #define a global function main
+
+# the program begins execution at main()
+main:
+	   			       # prompt user to enter an integer
+	    la  $a0, msg1              # $a0 = address of msg1
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+
+            li  $v0, 5		       # grabs user input
+	    syscall
+ 		
+	    move $s0, $v0              #move input to $s0 register
+            la   $s3, arr	       #loads array
+
+            addi $t0, $zero, 1         #initialize counter
+ 
+	    while:
+  
+            bgt $t0, $s0, fullArr      #exit conditions
+	    bgt $s0, 15, fullArr
+
+	    la  $a0, msg2              # $a0 = address of msg2
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+
+ 	    li $v0, 6                  #gets user input
+            syscall 
+
+            swc1 $f0, 0($s3)           #store user input in array
+
+	    addi $s3, $s3, 4           #adds counters
+	    addi $t0, $t0, 1
+ 	
+	    j while                    #loops
+
+	    fullArr:
+            la  $a0, msg3              # $a0 = address of msg1
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+          
+            la $t3, arr                #load arrays
+            addi $t0, $zero, 1
+
+	    printArr:
+            bgt $t0, $s0, countReps     #exit condition
+            lwc1 $f20, 0($t3)           #loads array
+            li $v0,2
+            mov.s $f12, $f20            #moves to printable register
+            syscall
+            la  $a0, newLine            # $a0 = address of newLine
+            li  $v0, 4
+	    syscall
+            addi $t0, $t0, 1		#counters
+            addi $t3, $t3, 4
+	    j printArr
+
+	    countReps:
+            la  $a0, msg4              # $a0 = address of msg4
+            li  $v0, 4
+	    syscall
+	    
+
+	    exitLoop:
+            li $v0, 10
+ 	    syscall
+            
+
+
+	
