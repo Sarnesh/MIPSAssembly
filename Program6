@@ -1,0 +1,101 @@
+###########################################################
+#  Name: Sarnesh Arulnathan
+#  Description: Uses a recursive function to change an entered integer from user
+###########################################################
+
+#data declarations: declare variable names used in program, storage allocated in RAM
+                            .data  
+msg1:         .asciiz "Enter an integer:\n" 	#create a string containing "Enter an integer:"
+msg2:         .asciiz "The solution is: " 	#create a string containing "The solution is:"
+n:            .word   0
+ans1:         .word   0
+
+#program code is contained below under .text
+                        .text
+                        .globl    main   #define a global function main
+
+# the program begins execution at main()
+main:
+	   			       # prompt user to enter an integer
+	    la  $a0, msg1              # $a0 = address of msg1
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+
+            li  $v0, 5		       # grabs user input
+	    syscall
+
+            sw  $v0, n		       # stores $v0 in my global variable n
+	
+	    lw  $a0, n		       # loads number grabbed from user input	
+	    jal function1	       # calls function1 and jumps to it
+            sw  $v0, ans1	       # store the value $v0 from function1 in ans1 (global variable)
+ 
+				       # print results
+	    la  $a0, msg2              # $a0 = address of msg1
+	    li  $v0, 4 		       # $v0 = 4  --- this is to call print_string()
+	    syscall
+	    li  $v0, 1
+	    lw  $a0, ans1	       # prints the number from function1
+	    syscall
+
+	    li $v0, 10		       # ends the program
+	    syscall	    
+
+############################################################################
+# Procedure/Function function1
+# Description: does algebra on n if less than or equal to 3 its 5n+14 else it is 
+# function1(n-1)/n + n*function1(n-3) + 4*n 
+# parameters: $a0 = n value
+# return value: $v0 = computed value
+# registers to be used: $s3 and $s4 will be used.
+############################################################################
+
+	    function1:	 	       
+	    addi $sp, $sp, -12	 # gets 12 bytes of space for values to be stored
+	    sw   $ra, 0($sp)	 # storing the value of the return value to the stack
+	    sw   $s3, 4($sp)     # stores the value of the local varialbe s3 in the stack 4 bytes apart
+	    sw   $s4, 8($sp)     # stores the value of the local varialbe s4 in the stack 4 bytes apart
+	    
+				 # base case
+            slt $s1, $a0, 4	 # checks to see if $a0 < 4
+	    beq $s1, $zero, else # if this is false then we jump to the else label
+	    mul  $s0, $a0, 5	 # algebra
+	    add  $s2, $s0, 14
+	    move $v0, $s2
+ 
+	    addi $sp, $sp, 12    # restore the stack space intially taken
+
+            jr   $ra		 # returns from the function
+	    
+	
+	    else:    
+	    addi  $a0, $a0, -1   # does (n-1)
+	    jal  function1	 # calls recursion
+	    addi  $a0, $a0, 1	 # adds 1 so n value returns to original value
+ 	    div   $s3, $v0, $a0  # (n-1)/n
+	   
+	    
+	    addi $a0, $a0, -3    # does (n-3)
+	    jal  function1       # calls recursion
+	    addi $a0, $a0, 3     # adds 3 so n value returns to original value
+	    mul $s4, $v0, $a0    # multiplies n and (n-3) and stores answer in $s4
+	    
+	    add  $v0, $s3, $s4   # function1(n-1)/n + n*function1(n-3)
+	    mul  $t4, $a0, 4     # multiplies n and 4
+
+	   
+
+	    
+	    add $v0, $v0, $t4    # function1(n-1)/n + n*function1(n-3) + 4*n
+
+	  
+	    lw   $s4, 8($sp)     # restoring value of the local variable to the stack
+	    lw   $s3, 4($sp)
+	    lw   $ra, 0($sp)     # restoring value of the return address to the stack
+	    addi $sp, $sp, 12    # restore the stack space intially taken
+	    jr    $ra            # returns from the function
+	    
+	    
+		
+
+	    
