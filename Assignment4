@@ -1,0 +1,132 @@
+###########################################################
+#  Assignment #: 4
+#  Name: Sarnesh Arulnathan
+#  ASU email: sarulnat@asu.edu
+#  Course: CSE/EEE230,  TTh 6:00pm
+#  Description: Uses MIPS to take in users electricity usage and calculate a total bill per month
+###########################################################
+#data declarations: declare variable names used in program, storage allocated in RAM
+                            .data  
+
+msg1:         .asciiz "Please enter the new electricity meter reading:\n" 	  #create a string containing "Please enter the new electricity meter reading:"
+msg2:	      .asciiz "Please enter the old electricity meter reading:\n"	  #create a string containing "Please enter the old electricity meter reading:"
+msg3:	      .asciiz "Please enter a month to compute their electricity bill, Use an integer between 1 and 12 (1 for January, etc.):\n"  
+msg4:	      .asciiz "No bill to pay this month.\n"                              #create a string containing "No bill to pay this month."
+msg5:	      .asciiz "Your total bill amount for this month: 25 dollar(s) for "  #create a string containing "Your total bill amount for this month: 25 dollar(s) for "
+msg6:         .asciiz " KWH"                                                      #create a string containing " KWH" 
+msg7:         .asciiz "Your total bill amount for this month: "                   #create a string containing "Your total bill amount for this month: "
+msg8:         .asciiz " dollar(s) for "                                           #create a string containing " dollar(s) for "
+#program code is contained below under .text 
+                        .text
+                        .globl    main   #define a global function main
+
+# the program begins execution at main()
+main:
+	    la    $a0, msg1            # $a0 = address of msg1
+            li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 5	       # grabs user input
+	    syscall
+            move  $t0, $v0	       #sets user input to temp reg $t0
+
+     
+            la    $a0, msg2            # $a0 = address of msg2
+            li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 5               # grabs user input
+	    syscall
+            move  $t1, $v0             # sets user input to temp reg $t1
+
+            la    $a0, msg3            # $a0 = address of msg3
+            li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 5               # grabs user input
+	    syscall
+            move  $t2, $v0             # sets user input to temp reg $t2
+
+            sub   $t3, $t0, $t1        #subtracts $t0 and $t1 and sets value to $t3
+            slt   $s0, $t3, 1	       #if $t3 < 1 then sets value of $s0 to 1 otherwise sets the value to 0   				
+	    beq   $s0, 1, printmsg1    #if $s0 is true go to label printmsg1
+	    beq   $s0, 0, printmsg2    #if $s0 is false go to label printmsg2
+	  
+
+	    printmsg1:                 #label
+	    li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+	    la    $a0, msg4            # $a0 = address of msg4
+            syscall
+	    li    $v0, 10
+	    syscall
+             
+            printmsg2:                 #label
+	    slt   $s1, $t3, 251        #if $t3 < 251 then sets value of $s1 to 1 otherwise sets the value to 0
+	    beq   $s1, 0, printmsg3    #if $s0 is false go to label printmsg3
+	    li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+	    la    $a0, msg5            # $a0 = address of msg5
+            syscall
+	    li    $v0, 1               # $v0 = 1  --- this is to print an integer
+	    move  $a0, $t3             # moves $t3 to $a0 so we can print the int
+	    syscall
+	    li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+	    la    $a0, msg6            # $a0 = address of msg6
+            syscall
+ 	    li    $v0, 10
+	    syscall
+	
+	    printmsg3:                 #label
+	    slt   $s0, $t3, 251        #if $t3 < 251 then sets value of $s0 to 1 otherwise sets the value to 0
+	    slt   $s1, $t2, 5          #if $t2 < 5 then sets value of $s1 to 1 otherwise sets the value to 0
+	    slt   $s2, $t2, 10         #if $t2 < 10 then sets value of $s2 to 1 otherwise sets the value to 0
+            beq   $s0, 1, printmsg4    #if $s0 is true go to label printmsg4
+            beq   $s1, 1, printmsg4    #if $s1 is true go to label printmsg4
+            beq   $s2, 0, printmsg4    #if $s2 is false go to label printmsg4
+	    li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+	    la    $a0, msg7            # $a0 = address of msg7
+            syscall
+	    sub   $t6, $t3, 250        #subtracts $t3 and 250 and sets value to $t6
+	    div   $t7, $t6, 18         #divides $t6 and 18 and sets value to $t7
+            mflo  $t8                  #finds quotient
+	    add   $t9, $t7, 25         #adds $t7 and 25 and sets value to $t9
+	    li    $v0, 1               # $v0 = 1  --- this is to print an integer
+            move  $a0, $t9             # moves $t9 to $a0 so we can print the int
+            syscall
+            li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+	    la    $a0, msg8            # $a0 = address of msg8
+            syscall
+ 	    li    $v0, 1               # $v0 = 1  --- this is to print an integer
+            move  $a0, $t3             # moves $t3 to $a0 so we can print the int
+            syscall
+	    li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+	    la    $a0, msg6	       # $a0 = address of msg6
+            syscall
+	    li    $v0, 10
+	    syscall
+		
+	    printmsg4: 
+	    li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+	    la    $a0, msg7            # $a0 = address of msg7
+            syscall
+            sub   $t6, $t3, 250	       #subtracts $t3 and 250 and sets value to $t6
+	    div   $t7, $t6, 20         #divides $t6 and 20 and sets value to $t7
+            mflo  $t8                  #finds quotient
+	    add   $t9, $t7, 25         #adds $t7 and 25 and sets value to $t9
+            li    $v0, 1               # $v0 = 1  --- this is to print an integer
+            move  $a0, $t9             # moves $t9 to $a0 so we can print the int
+            syscall
+            li    $v0, 4	       # $v0 = 4  --- this is to call print_string()
+	    la    $a0, msg8            # $a0 = address of msg8
+            syscall
+ 	    li    $v0, 1               # $v0 = 1  --- this is to print an integer
+            move  $a0, $t3             # moves $t3 to $a0 so we can print the int
+            syscall
+	    li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+	    la    $a0, msg6            # $a0 = address of msg6
+            syscall
+	    li    $v0, 10
+	    syscall
+
+	     
+
+
+
+
+ 
