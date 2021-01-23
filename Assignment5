@@ -1,0 +1,114 @@
+###########################################################
+#  Assignment #: 5
+#  Name: Sarnesh Arulnathan
+#  ASU email: sarulnat@asu.edu
+#  Course: CSE/EEE230,  TTh 6:00pm
+#  Description: Gets 2 integers, and an ending index from user and makes an array from provided info
+###########################################################
+#data declarations: declare variable names used in program, storage allocated in RAM
+                            .data  
+numbers_len:  .word     11
+numbers:      .word     2, 19, 23, -7, 15, -17, 11, -4, 23, -26, 27
+msg1:         .asciiz "Enter an ending index:\n" 	#create a string containing "Enter an ending index:"
+msg2:	      .asciiz "Enter an integer:\n"	  	#create a string containing "Enter an integer:\"
+msg3:	      .asciiz "Enter another integer:\n"        #create a string containing "Enter another integer:\n"
+msg4:	      .asciiz "Result Array Content:\n"  	#create a string containing "Result Array Content:"
+
+#program code is contained below under .text 
+                        .text
+                        .globl    main   #define a global function main
+
+# the program begins execution at main()
+main:
+	    la    $a0, msg1            # $a0 = address of msg1
+            li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 5	       # grabs user input
+	    syscall
+            move  $t0, $v0	       #sets user input to temp reg $t0
+
+     
+            la    $a0, msg2            # $a0 = address of msg2
+            li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 5               # grabs user input
+	    syscall
+            move  $t1, $v0             # sets user input to temp reg $t1
+
+            la    $a0, msg3            # $a0 = address of msg3
+            li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 5               # grabs user input
+	    syscall
+            move  $t2, $v0             # sets user input to temp reg $t2
+
+	    slt   $s0, $t1, $t2	       #checks to see if $t1 < $t2
+	    beq   $s0, 0, swap	       #checks to see if above statement is false
+	    beq   $s0, 1, forloop1     #checks to see if above statement is true
+
+	    la    $s4, 0	       #loads array
+	    
+	    la    $t3, numbers_len     #loads array length
+	    lw    $s7, 0($t3)          #stores array length
+	 
+	    li    $t5, 0
+
+	    swap:
+	    move $t3, $t1	       #swaps num1 and num2 if num1>num2 
+	    move $t1, $t2
+	    move $t2, $t3
+            slt   $s1, $t1, $t2        #checks to see if $t1 < $t2
+	    beq   $s1, 1, forloop1     #checks to see if above statement is true
+	    sub   $t4, $t2, $t1
+	    beq   $t4, 0, forloop1     #checks to see if above statement is false
+
+	    forloop1:
+            slt   $s2, $t5, $t0	       #checks to see if $t5 < $t0
+	    beq   $s2, 0, print        #checks to see if above statement is false
+          
+	    slt   $s3, $t5, 11        #checks to see if $t5 < $s7
+	    beq   $s3, 0, print        #checks to see if above statement is false
+	    
+	    slt   $t6, $t1, $s5        #checks to see if $t1 < $t5
+	 
+	    beq   $t6, 0, print
+	  
+	    slt   $t7, $s5, $t2
+
+            lw    $s5, 0($s4)    #stores array
+	    addi  $s4, $s4, 1
+            beq   $t7, 1, update	
+	   
+	
+	    update:
+	    mul  $s5, $s5, $t1         #multiplies the array at index with num1
+            add  $s5, $s5, $t2	       #adds previous arithmetic to num2
+            addi  $s4, $s4, 1
+            add   $t5, $t5, 1
+	    j    forloop1
+        
+
+	    print:
+	    la    $a0, msg4            # $a0 = address of msg4
+            li    $v0, 4               # $v0 = 4  --- this is to call print_string()
+	    syscall
+
+	    la    $s4, numbers
+	    lw    $s5, 0($s4)
+	    printmessage:
+	    beq   $t5, 11, exit	       #exits print statement once 11 integers have been printed
+	    li    $v0, 1
+	    move  $a0, $s5	       #moves array to $a0 to print
+	    syscall
+            addi  $s5, $s5, 1
+	    add   $t5, $t5, 1
+	    j     printmessage         #loops printing untill all indexes have been printed
+
+	    exit:
+	    li    $v0, 10
+	    syscall
+
+	    
+	    
+
+	    
