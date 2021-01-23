@@ -1,0 +1,122 @@
+###########################################################
+#  Assignment #: 3
+#  Name: Sarnesh Arulnathan
+#  ASU email: sarulnat@asu.edu
+#  Course: CSE/EEE230,  TTh 6:00pm
+#  Description: Uses MIPS to preform arithemetic operations on variables taken in from the user
+###########################################################
+
+#data declarations: declare variable names used in program, storage allocated in RAM
+                            .data  
+
+msg1:         .asciiz "Enter a value:\n" 	#create a string containing "num1 is:"
+msg2:	      .asciiz "Enter another value:\n"	#create a string containing "\nnum2 is:"
+msg3:	      .asciiz "Enter one more value:\n" #create a string containing "\nnum1+num2 = " 	
+msg4:	      .asciiz "Enter one more value:\n" #create a string containing "\nnum1-num2 = "
+msg5:	      .asciiz "num4+num1="              #create a string containing "num4+num1="#
+msg6:	      .asciiz "\nnum1-num2="            #create a string containing "num1-num2="
+msg7:         .asciiz "\nnum4*num2="            #create a string containing "num4*num2="
+msg8:         .asciiz "\nnum1/num3="            #create a string containing "num1/num3="
+msg9:         .asciiz "\nnum3 mod num1="        #create a string containing "num3 mod num1="
+msg10:      .asciiz "\n((((num2 mod 4) + num3) * 2) / num4) + num1="      #create a string containing "((((num2 mod 4) + num3) * 2) / num4) + num1="
+         
+#program code is contained below under .text
+                        .text
+                        .globl    main   #define a global function main
+
+# the program begins execution at main()
+main:
+	    la  $a0, msg1              # $a0 = address of msg1
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+            li  $v0, 5		       # grabs user input
+	    syscall
+            move $t0, $v0	       #sets user input to temp reg $t0
+
+     
+            la  $a0, msg2              # $a0 = address of msg2
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+            li  $v0, 5                 # grabs user input
+	    syscall
+            move $t1, $v0              # sets user input to temp reg $t1
+            
+
+            la  $a0, msg3              # $a0 = address of msg3
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall 
+            li  $v0, 5                 # grabs user input
+	    syscall
+            move $t2, $v0              #sets user input to temp reg $t2
+
+	    
+            la  $a0, msg4              # $a0 = address of msg4
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+            li  $v0, 5                 # grabs user input
+	    syscall
+            move $t3, $v0              #sets user input to temp reg $t3
+ 
+
+	    add   $t4, $t0, $t3        #adds num4 and num1 and sets value to $t4
+	    sub   $t5, $t0, $t1        #subtracts num1 and num2 and sets value to $t5
+	    mul   $t6, $t3, $t1        #multiplies num4 and num2 and sets value to $t6
+   
+	    
+		
+            la  $a0, msg5              # $a0 = address of msg5
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 1	       # $v0 = 1  --- this is to print an integer
+	    move  $a0, $t4	       # moves $t4 to $a0 to print the value of the addition 
+	    syscall
+		
+            la  $a0, msg6              # $a0 = address of msg6
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 1	       # $v0 = 1  --- this is to print an integer
+	    move  $a0, $t5	       # moves $t5 to $a0 to print the value of the subtraction
+	    syscall
+
+	    la  $a0, msg7              # $a0 = address of msg7
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 1	       # $v0 = 1  --- this is to print an integer
+	    move  $a0, $t6	       # moves $t6 to $a0 to print the value of the multiplication
+	    syscall
+		
+	    div   $t7, $t0, $t2        #divides num1 and num3 and sets value to $t7
+	    mflo  $t7                  #mflo to get quotient of num1 and num3
+            la  $a0, msg8              # $a0 = address of msg8
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 1	       # $v0 = 1  --- this is to print an integer
+	    move  $a0, $t7	       # moves $t7 to $a0 to print the value of the division
+	    syscall
+
+	    div   $t7, $t2, $t0        #divides num3 and num1 and sets value to $t7
+	    mfhi  $t7		       #mfhi to find the remainder of the division of num3 and num1
+            la  $a0, msg9              # $a0 = address of msg9 
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 1	       # $v0 = 1  --- this is to print an integer
+	    move  $a0, $t7	       # moves $t7 to $a0 to print the value of mod
+	    syscall
+
+	    div  $t7, $t1, $t3         #divides num2 and num4 and sets value to $t7
+            mfhi $t7		       #mfhi to find the remainder of the division of num2 and num4
+	    add  $t4, $t7, $t2         #adds the value in $t7 and num3 and sets value to $t4
+	    mul  $t6, $t4, 2           #multiplies the value in $t4 and 2 and sets value to $t6
+	    div  $t8, $t6, $t3         #divides the value in $t6 and num4 and sets value to $t8
+	    mflo $t8                   #mflo to get quotient of $t6 and num4
+	    add  $t9, $t8, $t0         #adds the value in $t8 and num1 and sets value to $t9    
+	    la  $a0, msg10             # $a0 = address of msg10
+            li  $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+	    li    $v0, 1	       # $v0 = 1  --- this is to print an integer
+	    move  $a0, $t9	       # moves $t9 to $a0 to print the value of the previous equation
+	    syscall
+
+	    
+            jr          $ra                   # return
+            
