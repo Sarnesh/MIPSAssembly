@@ -1,0 +1,61 @@
+###########################################################
+#  Assignment #: 2
+#  Name: Sarnesh Arulnathan
+#  ASU email: sarulnat@asu.edu
+#  Course: CSE/EEE230,  TTh 6:00pm
+#  Description: Uses MIPS to add and subtract a decimal and hex number
+###########################################################
+
+#data declarations: declare variable names used in program, storage allocated in RAM
+                            .data  
+num1:         .word 91543 		#intializes variable num1 to 91543
+num2:         .word 0xD8C 		#intializes variable num2 to 0xD8C
+
+msg1:         .asciiz "num1 is:" 	#create a string containing "num1 is:"
+msg2:	      .asciiz "\nnum2 is:"	#create a string containing "\nnum2 is:"
+msg3:	      .asciiz "\nnum1+num2 = "  #create a string containing "\nnum1+num2 = " 	
+msg4:	      .asciiz "\nnum1-num2 = " 	#create a string containing "\nnum1-num2 = "
+         
+#program code is contained below under .text
+                        .text
+                        .globl    main   #define a global function main
+
+# the program begins execution at main()
+main:
+	    la    $a0, msg1              # $a0 = address of msg1
+            li    $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+            li    $v0, 1                 # $v0 = 1  --- this is to print an integer
+	    lw 	  $a0, num1		 # loads num1	
+	    syscall	
+            move  $t0, $a0  		 # copies the data of num1 into a temp variable to add
+	    move  $t3, $t0		 # copies the data of num2 into a temp variable to add
+
+	    la    $a0, msg2              # $a0 = address of msg2
+            li    $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+	    li    $v0, 1                 # $v0 = 1  --- this is to print an integer
+            lw    $a0, num2              # loads num2
+	    syscall
+            move  $t1, $a0		 # copies the data of num1 into a temp variable to subtract
+	    move  $t4, $t1		 # copies the data of num2 into a temp variable to subtract
+
+	    add   $t2, $t0, $t1		 # adds the value of $t0 and $t1 and saves it to $t2		
+	    sub   $t5, $t3, $t4          # subtracts the value of $t3 and $t4 and saves it to $t2
+		 
+            la    $a0, msg3              # $a0 = address of msg3
+            li    $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+	    li    $v0, 1	         # $v0 = 1  --- this is to print an integer
+	    move  $a0, $t2		 # moves $t2 to $a0 to print the value of the addition
+	    syscall 
+
+            la    $a0, msg4              # $a0 = address of msg4
+            li    $v0, 4                 # $v0 = 4  --- this is to call print_string()
+            syscall
+	    li    $v0, 1                 # $v0 = 1  --- this is to print an integer
+	    move  $a0, $t5		 # moves $t5 to $a0 to print the value of the subtraction
+	    syscall 
+     
+            jr          $ra                   # return
+            
